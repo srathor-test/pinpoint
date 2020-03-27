@@ -1,5 +1,7 @@
 
+this is a fork project, for latest please check the parent project
 
+-----------------------------------------
 ![Pinpoint](web/psd/logo.png)
 
 [![Build Status](https://travis-ci.org/naver/pinpoint.svg?branch=master)](https://travis-ci.org/naver/pinpoint)
