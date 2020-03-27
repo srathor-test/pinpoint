@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Taejin Koo
@@ -46,24 +45,19 @@ import java.util.Objects;
 @Service
 public class GrpcAgentEventHandler implements SimpleHandler {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final boolean isDebug = logger.isDebugEnabled();
 
-    private final GrpcAgentEventMapper agentEventMapper;
+    @Autowired
+    private GrpcAgentEventMapper agentEventMapper;
 
-    private final GrpcAgentEventBatchMapper agentEventBatchMapper;
+    @Autowired
+    private GrpcAgentEventBatchMapper agentEventBatchMapper;
 
-    private final AgentEventMessageSerializerV1 agentEventMessageSerializerV1;
+    @Autowired
+    private AgentEventMessageSerializerV1 agentEventMessageSerializerV1;
 
-    private final AgentEventService agentEventService;
-
-    public GrpcAgentEventHandler(GrpcAgentEventMapper agentEventMapper,
-                                 GrpcAgentEventBatchMapper agentEventBatchMapper,
-                                 AgentEventMessageSerializerV1 agentEventMessageSerializerV1,
-                                 AgentEventService agentEventService) {
-        this.agentEventMapper = Objects.requireNonNull(agentEventMapper, "agentEventMapper");
-        this.agentEventBatchMapper = Objects.requireNonNull(agentEventBatchMapper, "agentEventBatchMapper");
-        this.agentEventMessageSerializerV1 = Objects.requireNonNull(agentEventMessageSerializerV1, "agentEventMessageSerializerV1");
-        this.agentEventService = Objects.requireNonNull(agentEventService, "agentEventService");
-    }
+    @Autowired
+    private AgentEventService agentEventService;
 
     @Override
     public void handleSimple(ServerRequest serverRequest) {
@@ -79,7 +73,7 @@ public class GrpcAgentEventHandler implements SimpleHandler {
     }
 
     private void handleAgentStat(PAgentStat agentStat) {
-        if (logger.isDebugEnabled()) {
+        if (isDebug) {
             logger.debug("Handle PAgentStat={}", MessageFormatUtils.debugLog(agentStat));
         }
 
@@ -97,7 +91,7 @@ public class GrpcAgentEventHandler implements SimpleHandler {
     }
 
     private void handleAgentStatBatch(PAgentStatBatch agentStatBatch) {
-        if (logger.isDebugEnabled()) {
+        if (isDebug) {
             logger.debug("Handle PAgentStatBatch={}", MessageFormatUtils.debugLog(agentStatBatch));
         }
 

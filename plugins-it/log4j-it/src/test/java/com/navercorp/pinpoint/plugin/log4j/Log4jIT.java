@@ -16,7 +16,6 @@
 package com.navercorp.pinpoint.plugin.log4j;
 
 import com.navercorp.pinpoint.pluginit.utils.AgentPath;
-import com.navercorp.pinpoint.test.plugin.ImportPlugin;
 import com.navercorp.pinpoint.test.plugin.PinpointAgent;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
@@ -31,12 +30,11 @@ import com.navercorp.pinpoint.test.plugin.PinpointPluginTestSuite;
 @RunWith(PinpointPluginTestSuite.class)
 @PinpointAgent(AgentPath.PATH)
 @Dependency({"log4j:log4j:[1.2.16,)"})
-@ImportPlugin({"com.navercorp.pinpoint:pinpoint-log4j-plugin"})
 @PinpointConfig("pinpoint-spring-bean-test.config")
 public class Log4jIT {
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         Logger logger = Logger.getLogger(getClass());
         logger.error("maru");
         

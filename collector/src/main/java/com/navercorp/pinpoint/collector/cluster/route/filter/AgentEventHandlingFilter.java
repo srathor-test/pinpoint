@@ -49,15 +49,12 @@ public class AgentEventHandlingFilter implements RouteFilter<ResponseEvent> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AgentEventService agentEventService;
+    @Autowired
+    private AgentEventService agentEventService;
 
-    private final DeserializerFactory<HeaderTBaseDeserializer> commandDeserializerFactory;
-
-    public AgentEventHandlingFilter(AgentEventService agentEventService,
-                                    @Qualifier("commandHeaderTBaseDeserializerFactory") DeserializerFactory<HeaderTBaseDeserializer> commandDeserializerFactory) {
-        this.agentEventService = Objects.requireNonNull(agentEventService, "agentEventService");
-        this.commandDeserializerFactory = Objects.requireNonNull(commandDeserializerFactory, "commandDeserializerFactory");
-    }
+    @Autowired
+    @Qualifier("commandHeaderTBaseDeserializerFactory")
+    private DeserializerFactory<HeaderTBaseDeserializer> commandDeserializerFactory;
 
     @Override
     public void doEvent(ResponseEvent event) {

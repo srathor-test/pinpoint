@@ -22,8 +22,6 @@ import com.navercorp.pinpoint.common.server.bo.AgentInfoBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 /**
  * @author emeroad
  * @author koo.taejin
@@ -31,14 +29,11 @@ import java.util.Objects;
 @Service
 public class AgentInfoService {
 
-    private final AgentInfoDao agentInfoDao;
+    @Autowired
+    private AgentInfoDao agentInfoDao;
 
-    private final ApplicationIndexDao applicationIndexDao;
-
-    public AgentInfoService(AgentInfoDao agentInfoDao, ApplicationIndexDao applicationIndexDao) {
-        this.agentInfoDao = Objects.requireNonNull(agentInfoDao, "agentInfoDao");
-        this.applicationIndexDao = Objects.requireNonNull(applicationIndexDao, "applicationIndexDao");
-    }
+    @Autowired
+    private ApplicationIndexDao applicationIndexDao;
 
     public void insert(final AgentInfoBo agentInfoBo) {
         agentInfoDao.insert(agentInfoBo);

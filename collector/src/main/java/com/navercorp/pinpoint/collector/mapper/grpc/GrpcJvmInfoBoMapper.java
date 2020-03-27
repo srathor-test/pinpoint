@@ -22,19 +22,14 @@ import com.navercorp.pinpoint.grpc.trace.PJvmInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 /**
  * @author HyunGil Jeong
  */
 @Component
 public class GrpcJvmInfoBoMapper {
 
-    private final GrpcJvmGcTypeMapper jvmGcTypeMapper;
-
-    public GrpcJvmInfoBoMapper(GrpcJvmGcTypeMapper jvmGcTypeMapper) {
-        this.jvmGcTypeMapper = Objects.requireNonNull(jvmGcTypeMapper, "jvmGcTypeMapper");
-    }
+    @Autowired
+    private GrpcJvmGcTypeMapper jvmGcTypeMapper;
 
     public JvmInfoBo map(final PJvmInfo jvmInfo) {
         final short version = (short) jvmInfo.getVersion();

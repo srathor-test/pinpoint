@@ -32,13 +32,11 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Taejin Koo
@@ -46,21 +44,17 @@ import java.util.Objects;
 @Repository
 public class HbaseDataSourceListDao implements AgentStatDaoV2<DataSourceListBo> {
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableNameProvider tableNameProvider;
+    @Autowired
+    private TableNameProvider tableNameProvider;
 
-    private final AgentStatHbaseOperationFactory agentStatHbaseOperationFactory;
+    @Autowired
+    private AgentStatHbaseOperationFactory agentStatHbaseOperationFactory;
 
-    private final DataSourceSerializer dataSourceSerializer;
-
-    public HbaseDataSourceListDao(@Qualifier("asyncPutHbaseTemplate") HbaseOperations2 hbaseTemplate, TableNameProvider tableNameProvider,
-                                  AgentStatHbaseOperationFactory agentStatHbaseOperationFactory, DataSourceSerializer dataSourceSerializer) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.tableNameProvider = Objects.requireNonNull(tableNameProvider, "tableNameProvider");
-        this.agentStatHbaseOperationFactory = Objects.requireNonNull(agentStatHbaseOperationFactory, "agentStatHbaseOperationFactory");
-        this.dataSourceSerializer = Objects.requireNonNull(dataSourceSerializer, "dataSourceSerializer");
-    }
+    @Autowired
+    private DataSourceSerializer dataSourceSerializer;
 
     @Override
     public void insert(String agentId, List<DataSourceListBo> dataSourceListBos) {
@@ -75,7 +69,10 @@ public class HbaseDataSourceListDao implements AgentStatDaoV2<DataSourceListBo> 
         List<Put> activeTracePuts = this.agentStatHbaseOperationFactory.createPuts(agentId, AgentStatType.DATASOURCE, reorderedDataSourceListBos, dataSourceSerializer);
         if (!activeTracePuts.isEmpty()) {
             TableName agentStatTableName = tableNameProvider.getTableName(HbaseTable.AGENT_STAT_VER2);
-            this.hbaseTemplate.asyncPut(agentStatTableName, activeTracePuts);
+            List<Put> rejectedPuts = this.hbaseTemplate.asyncPut(agentStatTableName, activeTracePuts);
+            if (CollectionUtils.hasLength(rejectedPuts)) {
+                this.hbaseTemplate.put(agentStatTableName, rejectedPuts);
+            }
         }
     }
 

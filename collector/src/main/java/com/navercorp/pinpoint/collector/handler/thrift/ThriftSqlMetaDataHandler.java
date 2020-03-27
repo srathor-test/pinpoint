@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 /**
  * @author emeroad
  */
@@ -37,12 +35,11 @@ import java.util.Objects;
 public class ThriftSqlMetaDataHandler implements RequestResponseHandler {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final SqlMetaDataService sqlMetaDataService;
+    @Autowired
+    private SqlMetaDataService sqlMetaDataService;
 
-    public ThriftSqlMetaDataHandler(SqlMetaDataService sqlMetaDataService) {
-        this.sqlMetaDataService = Objects.requireNonNull(sqlMetaDataService, "sqlMetaDataService");
+    public ThriftSqlMetaDataHandler() {
     }
-
 
     @Override
     public void handleRequest(ServerRequest serverRequest, ServerResponse serverResponse) {

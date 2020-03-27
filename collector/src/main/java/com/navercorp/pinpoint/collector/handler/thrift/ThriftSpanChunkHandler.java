@@ -30,8 +30,6 @@ import com.navercorp.pinpoint.thrift.dto.TSpanChunk;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 /**
  * @author emeroad
  */
@@ -40,14 +38,11 @@ public class ThriftSpanChunkHandler implements SimpleHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final TraceService traceService;
+    @Autowired
+    private TraceService traceService;
 
-    private final SpanFactory spanFactory;
-
-    public ThriftSpanChunkHandler(TraceService traceService, SpanFactory spanFactory) {
-        this.traceService = Objects.requireNonNull(traceService, "traceService");
-        this.spanFactory = Objects.requireNonNull(spanFactory, "spanFactory");
-    }
+    @Autowired
+    private SpanFactory spanFactory;
 
     @Override
     public void handleSimple(ServerRequest serverRequest) {

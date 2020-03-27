@@ -30,7 +30,6 @@ import com.navercorp.pinpoint.common.trace.ServiceType;
 import com.navercorp.pinpoint.common.profiler.util.ApplicationMapStatisticsUtils;
 import com.navercorp.pinpoint.common.server.util.TimeSlot;
 
-import com.navercorp.pinpoint.common.util.Assert;
 import com.sematext.hbase.wd.RowKeyDistributorByHashPrefix;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Increment;
@@ -42,7 +41,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Save response time data of WAS
@@ -57,48 +55,44 @@ public class HbaseMapResponseTimeDao implements MapResponseTimeDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
+    @Autowired
+    private AcceptedTimeService acceptedTimeService;
 
-    private final AcceptedTimeService acceptedTimeService;
+    @Autowired
+    private TimeSlot timeSlot;
 
-    private final TimeSlot timeSlot;
+    @Autowired
+    @Qualifier("selfBulkIncrementer")
+    private BulkIncrementer bulkIncrementer;
 
-    private final BulkIncrementer bulkIncrementer;
+    @Autowired
+    @Qualifier("statisticsSelfRowKeyDistributor")
+    private RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
 
     private final boolean useBulk;
 
-    private final TableDescriptor<HbaseColumnFamily.SelfStatMap> descriptor;
-
-
     @Autowired
-    public HbaseMapResponseTimeDao(HbaseOperations2 hbaseTemplate,
-                                   TableDescriptor<HbaseColumnFamily.SelfStatMap> descriptor,
-                                   @Qualifier("statisticsSelfRowKeyDistributor") RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix,
-                                   AcceptedTimeService acceptedTimeService, TimeSlot timeSlot,
-                                   @Qualifier("selfBulkIncrementer") BulkIncrementer bulkIncrementer) {
-        this(hbaseTemplate, descriptor, rowKeyDistributorByHashPrefix, acceptedTimeService, timeSlot, bulkIncrementer, true);
+    private TableDescriptor<HbaseColumnFamily.SelfStatMap> descriptor;
+
+    public HbaseMapResponseTimeDao() {
+        this(true);
     }
 
-    public HbaseMapResponseTimeDao(HbaseOperations2 hbaseTemplate,
-                                   TableDescriptor<HbaseColumnFamily.SelfStatMap> descriptor,
-                                   RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix,
-                                   AcceptedTimeService acceptedTimeService, TimeSlot timeSlot,
-                                   BulkIncrementer bulkIncrementer, boolean useBulk) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.rowKeyDistributorByHashPrefix = Objects.requireNonNull(rowKeyDistributorByHashPrefix, "rowKeyDistributorByHashPrefix");
-        this.acceptedTimeService = Objects.requireNonNull(acceptedTimeService, "acceptedTimeService");
-        this.timeSlot = Objects.requireNonNull(timeSlot, "timeSlot");
-        this.bulkIncrementer = Objects.requireNonNull(bulkIncrementer, "bulkIncrementer");
+    public HbaseMapResponseTimeDao(boolean useBulk) {
         this.useBulk = useBulk;
     }
 
     @Override
     public void received(String applicationName, ServiceType applicationServiceType, String agentId, int elapsed, boolean isError) {
-        Objects.requireNonNull(applicationName, "applicationName");
-        Objects.requireNonNull(agentId, "agentId");
+        if (applicationName == null) {
+            throw new NullPointerException("applicationName");
+        }
+        if (agentId == null) {
+            throw new NullPointerException("agentId");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("[Received] {} ({})[{}]", applicationName, applicationServiceType, agentId);

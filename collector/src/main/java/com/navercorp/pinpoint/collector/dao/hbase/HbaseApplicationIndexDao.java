@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
-
 /**
  * application names list.
  *
@@ -43,18 +41,17 @@ public class HbaseApplicationIndexDao implements ApplicationIndexDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.ApplicationIndex> descriptor;
-
-    public HbaseApplicationIndexDao(HbaseOperations2 hbaseTemplate, TableDescriptor<HbaseColumnFamily.ApplicationIndex> descriptor) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.ApplicationIndex> descriptor;
 
     @Override
     public void insert(final AgentInfoBo agentInfo) {
-        Objects.requireNonNull(agentInfo, "agentInfo");
+        if (agentInfo == null) {
+            throw new NullPointerException("agentInfo");
+        }
 
         final Put put = new Put(Bytes.toBytes(agentInfo.getApplicationName()));
         final byte[] qualifier = Bytes.toBytes(agentInfo.getAgentId());

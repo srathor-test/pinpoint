@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author jaehong.kim
@@ -34,11 +33,8 @@ import java.util.Objects;
 @Component
 public class ThriftDeadlockBoMapper implements ThriftBoMapper<DeadlockBo, TDeadlock> {
 
-    private final ThriftThreadDumpBoMapper threadDumpBoMapper;
-
-    public ThriftDeadlockBoMapper(ThriftThreadDumpBoMapper threadDumpBoMapper) {
-        this.threadDumpBoMapper = Objects.requireNonNull(threadDumpBoMapper, "threadDumpBoMapper");
-    }
+    @Autowired
+    private ThriftThreadDumpBoMapper threadDumpBoMapper;
 
     public DeadlockBo map(final TDeadlock tDeadlock) {
         final DeadlockBo deadlockBo = new DeadlockBo();

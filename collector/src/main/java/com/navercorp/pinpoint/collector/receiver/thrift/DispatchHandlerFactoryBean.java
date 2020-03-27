@@ -21,10 +21,8 @@ import com.navercorp.pinpoint.common.server.util.AcceptedTimeService;
 
 import com.navercorp.pinpoint.collector.manage.HandlerManager;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 /**
@@ -32,31 +30,23 @@ import java.util.Objects;
  */
 public class DispatchHandlerFactoryBean implements FactoryBean<DispatchHandler> {
 
-    private AcceptedTimeService acceptedTimeService;
-    private DispatchHandler dispatchHandler;
-
-    private HandlerManager handlerManager;
-
-    public DispatchHandlerFactoryBean() {
-
-    }
-
     @Autowired
-    public void setAcceptedTimeService(AcceptedTimeService acceptedTimeService) {
-        this.acceptedTimeService = Objects.requireNonNull(acceptedTimeService, "acceptedTimeService");
-    }
+    private AcceptedTimeService acceptedTimeService;
+    private final DispatchHandler delegate;
 
-    public void setDispatchHandler(DispatchHandler dispatchHandler) {
-        this.dispatchHandler = Objects.requireNonNull(dispatchHandler, "dispatchHandler");
-    }
+    private final HandlerManager handlerManager;
 
-    public void setHandlerManager(HandlerManager handlerManager) {
+    public DispatchHandlerFactoryBean(DispatchHandler delegate, HandlerManager handlerManager) {
+        this.delegate = Objects.requireNonNull(delegate, "delegate");
         this.handlerManager = Objects.requireNonNull(handlerManager, "handlerManager");
     }
 
+
+
+
     @Override
     public DispatchHandler getObject() throws Exception {
-        return new DelegateDispatchHandler(acceptedTimeService, dispatchHandler, handlerManager);
+        return new DelegateDispatchHandler(acceptedTimeService, delegate, handlerManager);
     }
 
     @Override
@@ -67,12 +57,5 @@ public class DispatchHandlerFactoryBean implements FactoryBean<DispatchHandler> 
     @Override
     public boolean isSingleton() {
         return true;
-    }
-
-    @PostConstruct
-    public void afterPropertiesSet() {
-        Objects.requireNonNull(acceptedTimeService, "acceptedTimeService");
-        Objects.requireNonNull(dispatchHandler, "dispatchHandler");
-        Objects.requireNonNull(handlerManager, "handlerManager");
     }
 }

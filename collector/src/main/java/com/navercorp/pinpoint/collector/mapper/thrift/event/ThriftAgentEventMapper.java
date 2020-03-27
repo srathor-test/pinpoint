@@ -23,19 +23,14 @@ import com.navercorp.pinpoint.thrift.dto.TDeadlock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 /**
  * @author Taejin Koo
  */
 @Component
 public class ThriftAgentEventMapper {
 
-    private final ThriftDeadlockEventBoMapper deadlockEventBoMapper;
-
-    public ThriftAgentEventMapper(ThriftDeadlockEventBoMapper deadlockEventBoMapper) {
-        this.deadlockEventBoMapper = Objects.requireNonNull(deadlockEventBoMapper, "deadlockEventBoMapper");
-    }
+    @Autowired
+    private ThriftDeadlockEventBoMapper deadlockEventBoMapper;
 
     public AgentEventBo map(TAgentStat tAgentStat) {
         if (tAgentStat == null) {

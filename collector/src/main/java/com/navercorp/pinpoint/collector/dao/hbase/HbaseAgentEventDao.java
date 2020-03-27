@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
-
 /**
  * @author HyunGil Jeong
  */
@@ -45,23 +43,20 @@ public class HbaseAgentEventDao implements AgentEventDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
-
-    private final TableDescriptor<HbaseColumnFamily.AgentEvent> descriptor;
-
-    private final ValueMapper<AgentEventBo> valueMapper;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
     @Autowired
-    public HbaseAgentEventDao(HbaseOperations2 hbaseTemplate, TableDescriptor<HbaseColumnFamily.AgentEvent> descriptor, ValueMapper<AgentEventBo> valueMapper) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.valueMapper = Objects.requireNonNull(valueMapper, "valueMapper");
-    }
+    private ValueMapper<AgentEventBo> valueMapper;
 
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.AgentEvent> descriptor;
 
     @Override
     public void insert(AgentEventBo agentEventBo) {
-        Objects.requireNonNull(agentEventBo, "agentEventBo");
+        if (agentEventBo == null) {
+            throw new NullPointerException("agentEventBo");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("insert agent event: {}", agentEventBo.toString());

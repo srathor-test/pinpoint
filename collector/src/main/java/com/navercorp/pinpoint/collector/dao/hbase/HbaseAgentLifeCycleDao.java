@@ -30,9 +30,8 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.Objects;
 
 /**
  * @author HyunGil Jeong
@@ -42,21 +41,20 @@ public class HbaseAgentLifeCycleDao implements AgentLifeCycleDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.AgentLifeCycleStatus> descriptor;
+    @Autowired
+    private ValueMapper<AgentLifeCycleBo> valueMapper;
 
-    private final ValueMapper<AgentLifeCycleBo> valueMapper;
-
-    public HbaseAgentLifeCycleDao(HbaseOperations2 hbaseTemplate, TableDescriptor<HbaseColumnFamily.AgentLifeCycleStatus> descriptor, ValueMapper<AgentLifeCycleBo> valueMapper) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.valueMapper = Objects.requireNonNull(valueMapper, "valueMapper");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.AgentLifeCycleStatus> descriptor;
 
     @Override
     public void insert(AgentLifeCycleBo agentLifeCycleBo) {
-        Objects.requireNonNull(agentLifeCycleBo, "agentLifeCycleBo");
+        if (agentLifeCycleBo == null) {
+            throw new NullPointerException("agentLifeCycleBo");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("insert agent life cycle. {}", agentLifeCycleBo.toString());

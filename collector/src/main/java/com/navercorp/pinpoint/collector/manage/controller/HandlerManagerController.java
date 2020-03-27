@@ -25,8 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.navercorp.pinpoint.collector.manage.HandlerManager;
 
-import java.util.Objects;
-
 /**
  * @author Taejin Koo
  */
@@ -34,11 +32,8 @@ import java.util.Objects;
 @RequestMapping("/admin")
 public class HandlerManagerController {
 
-    private final HandlerManager handlerManager;
-
-    public HandlerManagerController(HandlerManager handlerManager) {
-        this.handlerManager = Objects.requireNonNull(handlerManager, "handlerManager");
-    }
+    @Autowired
+    private HandlerManager handlerManager;
 
     @RequestMapping(value = "/enableAccess", method = RequestMethod.GET)
     @ResponseBody

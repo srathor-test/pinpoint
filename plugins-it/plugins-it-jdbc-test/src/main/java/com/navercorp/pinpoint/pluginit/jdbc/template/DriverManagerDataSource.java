@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.sql.SQLFeatureNotSupportedException;
+
 
 public class DriverManagerDataSource implements DataSource {
     private String jdbcUrl;
@@ -31,6 +33,12 @@ public class DriverManagerDataSource implements DataSource {
         this.properties = properties;
     }
 
+		@Override
+	public java.util.logging.Logger getParentLogger()
+                throws SQLFeatureNotSupportedException {
+					return null;
+				}
+				
     @Override
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(jdbcUrl, properties);

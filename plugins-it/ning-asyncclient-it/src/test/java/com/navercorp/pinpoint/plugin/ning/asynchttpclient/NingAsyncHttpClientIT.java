@@ -23,7 +23,6 @@ import java.util.concurrent.Future;
 import com.navercorp.pinpoint.pluginit.utils.AgentPath;
 import com.navercorp.pinpoint.pluginit.utils.PluginITConstants;
 import com.navercorp.pinpoint.pluginit.utils.WebServer;
-import com.navercorp.pinpoint.test.plugin.ImportPlugin;
 import com.navercorp.pinpoint.test.plugin.PinpointAgent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -48,7 +47,6 @@ import com.ning.http.client.Response;
 @Dependency({ "com.ning:async-http-client:[1.7.24],[1.8.16,1.8.999)",
         WebServer.VERSION, PluginITConstants.VERSION})
 @JvmVersion(7)
-@ImportPlugin({"com.navercorp.pinpoint:pinpoint-ning-asynchttpclient-plugin"})
 public class NingAsyncHttpClientIT {
 
     private static WebServer webServer;
@@ -59,7 +57,7 @@ public class NingAsyncHttpClientIT {
     }
 
     @AfterClass
-    public static void AfterClass() {
+    public static void AfterClass() throws Exception {
         webServer = WebServer.cleanup(webServer);
     }
 

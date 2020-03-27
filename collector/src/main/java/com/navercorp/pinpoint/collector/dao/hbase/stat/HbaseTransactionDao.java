@@ -29,7 +29,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.List;
  */
 @Repository
 public class HbaseTransactionDao implements AgentStatDaoV2<TransactionBo> {
-    @Qualifier("asyncPutHbaseTemplate")
+
     @Autowired
     private HbaseOperations2 hbaseTemplate;
 
@@ -63,7 +62,10 @@ public class HbaseTransactionDao implements AgentStatDaoV2<TransactionBo> {
         List<Put> transactionPuts = this.agentStatHbaseOperationFactory.createPuts(agentId, AgentStatType.TRANSACTION, transactionBos, this.transactionSerializer);
         if (!transactionPuts.isEmpty()) {
             TableName agentStatTableName = tableNameProvider.getTableName(HbaseTable.AGENT_STAT_VER2);
-            this.hbaseTemplate.asyncPut(agentStatTableName, transactionPuts);
+            List<Put> rejectedPuts = this.hbaseTemplate.asyncPut(agentStatTableName, transactionPuts);
+            if (CollectionUtils.isNotEmpty(rejectedPuts)) {
+                this.hbaseTemplate.put(agentStatTableName, rejectedPuts);
+            }
         }
     }
 }

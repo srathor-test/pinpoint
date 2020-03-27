@@ -51,7 +51,6 @@ import org.mockito.Spy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -97,20 +96,19 @@ public class ThriftAgentStatHandlerV2Test {
     @Mock
     private AgentStatDaoV2<DirectBufferBo> directBufferDao;
 
+    @InjectMocks
+    private HBaseAgentStatService hBaseAgentStatService = new HBaseAgentStatService();
 
     @Spy
     private List<AgentStatService> agentStatServiceList = new ArrayList<>();
 
-    private ThriftAgentStatHandlerV2 thriftAgentStatHandlerV2;
-    private HBaseAgentStatService hBaseAgentStatService;
+    @InjectMocks
+    private ThriftAgentStatHandlerV2 thriftAgentStatHandlerV2 = new ThriftAgentStatHandlerV2();
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        hBaseAgentStatService = new HBaseAgentStatService(jvmGcDao, jvmGcDetailedDao, cpuLoadDao, transactionDao,
-                activeTraceDao, dataSourceDao, responseTimeDao, deadlockDao, fileDescriptorDao, directBufferDao);
         agentStatServiceList.add(hBaseAgentStatService);
-        thriftAgentStatHandlerV2 = new ThriftAgentStatHandlerV2(agentStatMapper, agentStatBatchMapper, Optional.of(agentStatServiceList));
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

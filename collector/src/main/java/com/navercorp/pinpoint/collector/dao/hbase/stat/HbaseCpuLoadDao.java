@@ -29,11 +29,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author HyunGil Jeong
@@ -41,22 +39,17 @@ import java.util.Objects;
 @Repository
 public class HbaseCpuLoadDao implements AgentStatDaoV2<CpuLoadBo> {
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableNameProvider tableNameProvider;
+    @Autowired
+    private TableNameProvider tableNameProvider;
 
-    private final AgentStatHbaseOperationFactory agentStatHbaseOperationFactory;
+    @Autowired
+    private AgentStatHbaseOperationFactory agentStatHbaseOperationFactory;
 
-    private final CpuLoadSerializer cpuLoadSerializer;
-
-    public HbaseCpuLoadDao(@Qualifier("asyncPutHbaseTemplate") HbaseOperations2 hbaseTemplate,
-                           TableNameProvider tableNameProvider, AgentStatHbaseOperationFactory agentStatHbaseOperationFactory,
-                           CpuLoadSerializer cpuLoadSerializer) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.tableNameProvider = Objects.requireNonNull(tableNameProvider, "tableNameProvider");
-        this.agentStatHbaseOperationFactory = Objects.requireNonNull(agentStatHbaseOperationFactory, "agentStatHbaseOperationFactory");
-        this.cpuLoadSerializer = Objects.requireNonNull(cpuLoadSerializer, "cpuLoadSerializer");
-    }
+    @Autowired
+    private CpuLoadSerializer cpuLoadSerializer;
 
     @Override
     public void insert(String agentId, List<CpuLoadBo> cpuLoadBos) {
@@ -69,7 +62,10 @@ public class HbaseCpuLoadDao implements AgentStatDaoV2<CpuLoadBo> {
         List<Put> cpuLoadPuts = this.agentStatHbaseOperationFactory.createPuts(agentId, AgentStatType.CPU_LOAD, cpuLoadBos, this.cpuLoadSerializer);
         if (!cpuLoadPuts.isEmpty()) {
             TableName agentStatTableName = tableNameProvider.getTableName(HbaseTable.AGENT_STAT_VER2);
-            this.hbaseTemplate.asyncPut(agentStatTableName, cpuLoadPuts);
+            List<Put> rejectedPuts = this.hbaseTemplate.asyncPut(agentStatTableName, cpuLoadPuts);
+            if (CollectionUtils.isNotEmpty(rejectedPuts)) {
+                this.hbaseTemplate.put(agentStatTableName, rejectedPuts);
+            }
         }
     }
 }

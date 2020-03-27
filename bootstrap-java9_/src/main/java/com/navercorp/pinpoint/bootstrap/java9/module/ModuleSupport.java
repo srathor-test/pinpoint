@@ -47,7 +47,7 @@ public class ModuleSupport {
             throw new NullPointerException("instrumentation");
         }
         if (allowedProviders == null) {
-            throw new NullPointerException("allowedProviders");
+            throw new NullPointerException("instrumentation");
         }
         this.instrumentation = instrumentation;
         this.javaBaseModule = wrapJavaModule(Object.class);

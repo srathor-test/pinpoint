@@ -17,7 +17,6 @@
 
 package com.navercorp.pinpoint.common.hbase;
 
-import com.navercorp.pinpoint.common.util.CollectionUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
@@ -27,7 +26,7 @@ import org.apache.hadoop.hbase.client.Put;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Taejin Koo
@@ -35,8 +34,8 @@ import java.util.concurrent.atomic.LongAdder;
 public class HBaseAsyncTemplate implements HBaseAsyncOperation {
 
     private final HTableMultiplexer hTableMultiplexer;
-    private final LongAdder opsCount = new LongAdder();
-    private final LongAdder opsRejectCount = new LongAdder();
+    private final AtomicInteger opsCount = new AtomicInteger();
+    private final AtomicInteger opsRejectCount = new AtomicInteger();
 
     public HBaseAsyncTemplate(Configuration conf, int perRegionServerBufferQueueSize) throws IOException {
         this.hTableMultiplexer = new HTableMultiplexer(conf, perRegionServerBufferQueueSize);
@@ -53,22 +52,22 @@ public class HBaseAsyncTemplate implements HBaseAsyncOperation {
 
     @Override
     public boolean put(TableName tableName, Put put) {
-        opsCount.increment();
+        opsCount.incrementAndGet();
 
         boolean success = hTableMultiplexer.put(tableName, put);
         if (!success) {
-            opsRejectCount.increment();
+            opsRejectCount.incrementAndGet();
         }
         return success;
     }
 
     @Override
     public List<Put> put(TableName tableName, List<Put> puts) {
-        opsCount.add(puts.size());
+        opsCount.addAndGet(puts.size());
 
         List<Put> rejectPuts = hTableMultiplexer.put(tableName, puts);
-        if (CollectionUtils.hasLength(rejectPuts)) {
-            opsRejectCount.add(rejectPuts.size());
+        if (rejectPuts != null && rejectPuts.size() > 0) {
+            opsRejectCount.addAndGet(rejectPuts.size());
         }
         return rejectPuts;
     }
@@ -90,9 +89,7 @@ public class HBaseAsyncTemplate implements HBaseAsyncOperation {
 
     @Override
     public Long getOpsFailedCount() {
-        HTableMultiplexer.HTableMultiplexerStatus status = hTableMultiplexer.getHTableMultiplexerStatus();
-        status.getTotalBufferedCounter();
-        return status.getTotalFailedCounter();
+        return hTableMultiplexer.getHTableMultiplexerStatus().getTotalFailedCounter();
     }
 
     @Override

@@ -27,7 +27,6 @@ import com.navercorp.pinpoint.test.plugin.PinpointPluginTestSuite;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +89,6 @@ public class MSSqlIT extends DataBaseTestCase {
         super.testStatement();
     }
 
-    @Test
     @Override
     public void testStoredProcedure_with_IN_OUT_parameters() throws Exception {
         super.testStoredProcedure_with_IN_OUT_parameters();

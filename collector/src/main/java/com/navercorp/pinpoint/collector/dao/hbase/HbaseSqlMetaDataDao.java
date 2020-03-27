@@ -28,10 +28,9 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
-import java.util.Objects;
 
 /**
  * @author minwoo.jung
@@ -41,24 +40,21 @@ public class HbaseSqlMetaDataDao implements SqlMetaDataDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.SqlMetadataV2> descriptor;
+    @Autowired
+    @Qualifier("metadataRowKeyDistributor2")
+    private RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
 
-    private final RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
-
-    public HbaseSqlMetaDataDao(HbaseOperations2 hbaseTemplate,
-                               TableDescriptor<HbaseColumnFamily.SqlMetadataV2> descriptor,
-                               @Qualifier("metadataRowKeyDistributor2") RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.rowKeyDistributorByHashPrefix = Objects.requireNonNull(rowKeyDistributorByHashPrefix, "rowKeyDistributorByHashPrefix");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.SqlMetadataV2> descriptor;
 
     @Override
     public void insert(SqlMetaDataBo sqlMetaData) {
-        Objects.requireNonNull(sqlMetaData, "sqlMetaData");
-
+        if (sqlMetaData == null) {
+            throw new NullPointerException("sqlMetaData");
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("insert:{}", sqlMetaData);
         }

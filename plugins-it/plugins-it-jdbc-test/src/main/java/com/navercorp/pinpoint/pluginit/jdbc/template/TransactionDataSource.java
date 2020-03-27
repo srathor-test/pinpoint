@@ -21,7 +21,8 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
-
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.concurrent.Executor;
 /**
  * for test only
  * WARNING Not thread safe
@@ -35,6 +36,16 @@ public class TransactionDataSource implements DataSource {
         this.dataSource = dataSource;
     }
 
+	
+	@Override
+	public java.util.logging.Logger getParentLogger()
+                throws SQLFeatureNotSupportedException {
+					return null;
+				}
+				
+
+
+
     @Override
     public Connection getConnection() throws SQLException {
         final Connection innerConnection = this.innerConnection;
@@ -47,7 +58,7 @@ public class TransactionDataSource implements DataSource {
     }
 
     public void doInTransaction(TransactionCallback transacion) throws SQLException {
-        final Connection innerConnection = getCurrentConnection();
+        final Connection innerConnection = this.innerConnection;
         innerConnection.setAutoCommit(false);
         try {
             transacion.doInTransaction();
@@ -60,13 +71,6 @@ public class TransactionDataSource implements DataSource {
             }
         }
 
-    }
-
-    private Connection getCurrentConnection() throws SQLException {
-        if (this.innerConnection == null) {
-            this.innerConnection = this.dataSource.getConnection();
-        }
-        return this.innerConnection;
     }
 
     private UnclosedConnection wrapUnclosedConnection(Connection innerConnection) {
@@ -134,6 +138,34 @@ public class TransactionDataSource implements DataSource {
         public UnclosedConnection(Connection delegate) {
             this.delegate = delegate;
         }
+		
+		@Override
+        public void setSchema(String schema)
+        throws SQLException {
+		}
+		
+		@Override
+        public String getSchema()
+          throws SQLException {
+			  return "";
+		  }
+		
+		@Override
+        public void abort(Executor executor)
+			throws SQLException {
+			}
+			
+		@Override
+        public void setNetworkTimeout(Executor executor,
+                       int milliseconds)
+                throws SQLException{
+				}
+				
+		@Override
+        public int getNetworkTimeout()
+               throws SQLException {
+				   return 0;
+			   }
 
         @Override
         public Statement createStatement() throws SQLException {

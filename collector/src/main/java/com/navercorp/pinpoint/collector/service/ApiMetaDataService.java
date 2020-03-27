@@ -21,16 +21,11 @@ import com.navercorp.pinpoint.common.server.bo.ApiMetaDataBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 public class ApiMetaDataService {
 
-    private final ApiMetaDataDao sqlMetaDataDao;
-
-    public ApiMetaDataService(ApiMetaDataDao sqlMetaDataDao) {
-        this.sqlMetaDataDao = Objects.requireNonNull(sqlMetaDataDao, "sqlMetaDataDao");
-    }
+    @Autowired
+    private ApiMetaDataDao sqlMetaDataDao;
 
     public void insert(final ApiMetaDataBo apiMetaDataBo) {
         sqlMetaDataDao.insert(apiMetaDataBo);

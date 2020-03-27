@@ -26,8 +26,6 @@ import java.util.Scanner;
  * @author Woonduk Kang(emeroad)
  */
 public class ArgsParser {
-    public static final String DELIMITER = ",";
-    private static final String DELIMITER_PATTERN = "\\s*" + DELIMITER + "\\s*";
 
     public Map<String, String> parse(String args) {
         if (isEmpty(args)) {
@@ -37,7 +35,7 @@ public class ArgsParser {
         final Map<String, String> map = new HashMap<String, String>();
 
         Scanner scanner = new Scanner(args);
-        scanner.useDelimiter(DELIMITER_PATTERN);
+        scanner.useDelimiter("\\s*,\\s*");
 
         while (scanner.hasNext()) {
             String token = scanner.next();

@@ -23,17 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 public class SqlMetaDataService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final SqlMetaDataDao sqlMetaDataDao;
-
-    public SqlMetaDataService(SqlMetaDataDao sqlMetaDataDao) {
-        this.sqlMetaDataDao = Objects.requireNonNull(sqlMetaDataDao, "sqlMetaDataDao");
-    }
+    @Autowired
+    private SqlMetaDataDao sqlMetaDataDao;
 
     public void insert(final SqlMetaDataBo sqlMetaDataBo) {
         this.sqlMetaDataDao.insert(sqlMetaDataBo);

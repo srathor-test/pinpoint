@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author HyunGil Jeong
@@ -46,42 +45,35 @@ import java.util.Objects;
 @Component
 public class ThriftAgentStatMapper {
 
-    private final ThriftJvmGcBoMapper jvmGcBoMapper;
+    @Autowired
+    private ThriftJvmGcBoMapper jvmGcBoMapper;
 
-    private final ThriftJvmGcDetailedBoMapper jvmGcDetailedBoMapper;
+    @Autowired
+    private ThriftJvmGcDetailedBoMapper jvmGcDetailedBoMapper;
 
-    private final ThriftCpuLoadBoMapper cpuLoadBoMapper;
+    @Autowired
+    private ThriftCpuLoadBoMapper cpuLoadBoMapper;
 
-    private final ThriftTransactionBoMapper transactionBoMapper;
+    @Autowired
+    private ThriftTransactionBoMapper transactionBoMapper;
 
-    private final ThriftActiveTraceBoMapper activeTraceBoMapper;
+    @Autowired
+    private ThriftActiveTraceBoMapper activeTraceBoMapper;
 
-    private final ThriftDataSourceBoMapper dataSourceBoMapper;
+    @Autowired
+    private ThriftDataSourceBoMapper dataSourceBoMapper;
 
-    private final ThriftResponseTimeBoMapper responseTimeBoMapper;
+    @Autowired
+    private ThriftResponseTimeBoMapper responseTimeBoMapper;
 
-    private final ThriftDeadlockThreadCountBoMapper deadlockThreadCountBoMapper;
+    @Autowired
+    private ThriftDeadlockThreadCountBoMapper deadlockThreadCountBoMapper;
 
-    private final ThriftFileDescriptorBoMapper fileDescriptorBoMapper;
+    @Autowired
+    private ThriftFileDescriptorBoMapper fileDescriptorBoMapper;
 
-    private final ThriftDirectBufferBoMapper directBufferBoMapper;
-
-    public ThriftAgentStatMapper(ThriftJvmGcBoMapper jvmGcBoMapper, ThriftJvmGcDetailedBoMapper jvmGcDetailedBoMapper,
-                                 ThriftCpuLoadBoMapper cpuLoadBoMapper, ThriftTransactionBoMapper transactionBoMapper,
-                                 ThriftActiveTraceBoMapper activeTraceBoMapper, ThriftDataSourceBoMapper dataSourceBoMapper,
-                                 ThriftResponseTimeBoMapper responseTimeBoMapper, ThriftDeadlockThreadCountBoMapper deadlockThreadCountBoMapper,
-                                 ThriftFileDescriptorBoMapper fileDescriptorBoMapper, ThriftDirectBufferBoMapper directBufferBoMapper) {
-        this.jvmGcBoMapper = Objects.requireNonNull(jvmGcBoMapper, "jvmGcBoMapper");
-        this.jvmGcDetailedBoMapper = Objects.requireNonNull(jvmGcDetailedBoMapper, "jvmGcDetailedBoMapper");
-        this.cpuLoadBoMapper = Objects.requireNonNull(cpuLoadBoMapper, "cpuLoadBoMapper");
-        this.transactionBoMapper = Objects.requireNonNull(transactionBoMapper, "transactionBoMapper");
-        this.activeTraceBoMapper = Objects.requireNonNull(activeTraceBoMapper, "activeTraceBoMapper");
-        this.dataSourceBoMapper = Objects.requireNonNull(dataSourceBoMapper, "dataSourceBoMapper");
-        this.responseTimeBoMapper = Objects.requireNonNull(responseTimeBoMapper, "responseTimeBoMapper");
-        this.deadlockThreadCountBoMapper = Objects.requireNonNull(deadlockThreadCountBoMapper, "deadlockThreadCountBoMapper");
-        this.fileDescriptorBoMapper = Objects.requireNonNull(fileDescriptorBoMapper, "fileDescriptorBoMapper");
-        this.directBufferBoMapper = Objects.requireNonNull(directBufferBoMapper, "directBufferBoMapper");
-    }
+    @Autowired
+    private ThriftDirectBufferBoMapper directBufferBoMapper;
 
     public AgentStatBo map(TAgentStat tAgentStat) {
         if (tAgentStat == null) {

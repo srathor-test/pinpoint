@@ -47,9 +47,7 @@ export class UrlRouteManagerService {
         const baseUrl = [startPath, realTimePath, applicationPath];
         const finalUrl = this.newUrlStateNotificationService.hasValue(UrlPathId.AGENT_ID) ? [...baseUrl, this.newUrlStateNotificationService.getPathValue(UrlPathId.AGENT_ID)] : baseUrl;
 
-        this.router.navigate(finalUrl, {
-            queryParamsHandling: 'preserve'
-        });
+        this.router.navigate(finalUrl);
     }
 
     moveToConfigPage(type: string): void {

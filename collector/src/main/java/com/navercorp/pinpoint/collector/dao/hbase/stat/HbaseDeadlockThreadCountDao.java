@@ -29,7 +29,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.List;
  */
 @Repository
 public class HbaseDeadlockThreadCountDao implements AgentStatDaoV2<DeadlockThreadCountBo> {
-    @Qualifier("asyncPutHbaseTemplate")
+
     @Autowired
     private HbaseOperations2 hbaseTemplate;
 
@@ -63,7 +62,10 @@ public class HbaseDeadlockThreadCountDao implements AgentStatDaoV2<DeadlockThrea
         List<Put> deadlockPuts = this.agentStatHbaseOperationFactory.createPuts(agentId, AgentStatType.DEADLOCK, deadlockThreadCountBos, this.deadlockThreadCountSerializer);
         if (!deadlockPuts.isEmpty()) {
             TableName agentStatTableName = tableNameProvider.getTableName(HbaseTable.AGENT_STAT_VER2);
-            this.hbaseTemplate.asyncPut(agentStatTableName, deadlockPuts);
+            List<Put> rejectedPuts = this.hbaseTemplate.asyncPut(agentStatTableName, deadlockPuts);
+            if (CollectionUtils.isNotEmpty(rejectedPuts)) {
+                this.hbaseTemplate.put(agentStatTableName, rejectedPuts);
+            }
         }
     }
 

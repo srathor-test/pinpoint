@@ -28,10 +28,9 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
-import java.util.Objects;
 
 /**
  * @author emeroad
@@ -42,24 +41,21 @@ public class HbaseStringMetaDataDao implements StringMetaDataDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.StringMetadataStr> descriptor;
+    @Autowired
+    @Qualifier("metadataRowKeyDistributor")
+    private RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
 
-    private final RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix;
-
-    public HbaseStringMetaDataDao(HbaseOperations2 hbaseTemplate,
-                                  TableDescriptor<HbaseColumnFamily.StringMetadataStr> descriptor,
-                                  @Qualifier("metadataRowKeyDistributor") RowKeyDistributorByHashPrefix rowKeyDistributorByHashPrefix) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.rowKeyDistributorByHashPrefix = Objects.requireNonNull(rowKeyDistributorByHashPrefix, "rowKeyDistributorByHashPrefix");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.StringMetadataStr> descriptor;
 
     @Override
     public void insert(StringMetaDataBo stringMetaData) {
-        Objects.requireNonNull(stringMetaData, "stringMetaData");
-
+        if (stringMetaData == null) {
+            throw new NullPointerException("stringMetaData");
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("insert:{}", stringMetaData);
         }

@@ -35,11 +35,8 @@ import java.util.Objects;
 public class AgentEventAsyncTaskService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AgentEventService agentEventService;
-
-    public AgentEventAsyncTaskService(AgentEventService agentEventService) {
-        this.agentEventService = Objects.requireNonNull(agentEventService, "agentEventService");
-    }
+    @Autowired
+    private AgentEventService agentEventService;
 
     @Async("agentEventWorker")
     public void handleEvent(final AgentProperty agentProperty, long eventTimestamp, AgentEventType eventType) {

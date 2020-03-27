@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.navercorp.pinpoint.plugin.hbase;
+package com.navercorp.pinpoint.plugin.jdk7.hbase;
 
 import com.navercorp.pinpoint.bootstrap.plugin.test.PluginTestVerifier;
 import com.navercorp.pinpoint.bootstrap.plugin.test.PluginTestVerifierHolder;
@@ -37,7 +37,6 @@ import static org.mockito.Mockito.doReturn;
 @PinpointAgent(AgentPath.PATH)
 @JvmVersion(8)
 @Dependency({"org.apache.hbase:hbase-shaded-client:[1.2.6.1]", "org.mockito:mockito-core:2.7.22"})
-@ImportPlugin("com.navercorp.pinpoint:pinpoint-hbase-plugin")
 @PinpointConfig("hbase/pinpoint-hbase-test.config")
 public class HbaseClientIT {
 
@@ -58,8 +57,7 @@ public class HbaseClientIT {
 
         try {
             admin.tableExists(TableName.valueOf("test"));
-        } catch (Exception ignore) {
-            //
+        } catch (Exception e) {
         }
 
         PluginTestVerifier verifier = PluginTestVerifierHolder.getInstance();
@@ -83,8 +81,7 @@ public class HbaseClientIT {
 
         try {
             table.put(put);
-        } catch (Exception ignore) {
-            //
+        } catch (Exception e) {
         }
 
         PluginTestVerifier verifier = PluginTestVerifierHolder.getInstance();

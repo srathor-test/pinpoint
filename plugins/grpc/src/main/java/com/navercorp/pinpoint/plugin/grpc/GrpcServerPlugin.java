@@ -133,7 +133,7 @@ public class GrpcServerPlugin implements ProfilerPlugin, TransformTemplateAware 
         public byte[] doInTransform(Instrumentor instrumentor, ClassLoader classLoader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws InstrumentException {
             final InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
 
-            GrpcUtils.addServerListenerMethod(target, true);
+            GrpcUtils.addListenerMethod(target, true);
 
             return target.toBytecode();
         }
@@ -158,7 +158,7 @@ public class GrpcServerPlugin implements ProfilerPlugin, TransformTemplateAware 
 
             final InstrumentClass target = instrumentor.getInstrumentClass(classLoader, className, classfileBuffer);
 
-            GrpcUtils.addServerListenerMethod(target, grpcConfig.isServerStreamingOnMessageEnable());
+            GrpcUtils.addListenerMethod(target, grpcConfig.isServerStreamingOnMessageEnable());
 
             return target.toBytecode();
         }

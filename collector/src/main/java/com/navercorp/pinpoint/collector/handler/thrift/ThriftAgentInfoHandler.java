@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 /**
  * @author emeroad
  * @author koo.taejin
@@ -40,14 +38,11 @@ public class ThriftAgentInfoHandler implements SimpleAndRequestResponseHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private final AgentInfoService agentInfoService;
+    @Autowired
+    private AgentInfoService agentInfoService;
 
-    private final ThriftAgentInfoBoMapper agentInfoBoMapper;
-
-    public ThriftAgentInfoHandler(AgentInfoService agentInfoService, ThriftAgentInfoBoMapper agentInfoBoMapper) {
-        this.agentInfoService = Objects.requireNonNull(agentInfoService, "agentInfoService");
-        this.agentInfoBoMapper = Objects.requireNonNull(agentInfoBoMapper, "agentInfoBoMapper");
-    }
+    @Autowired
+    private ThriftAgentInfoBoMapper agentInfoBoMapper;
 
     @Override
     public void handleSimple(ServerRequest serverRequest) {

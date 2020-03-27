@@ -100,6 +100,10 @@ public abstract class DataBaseTestCase {
         DriverManagerUtils.deregisterDriver();
     }
 
+    protected Connection connectDB() throws SQLException {
+        return DriverManager.getConnection(jdbcUrl, databaseId, databaseIdPassword);
+    }
+
     public static class User {
         private final int id;
         private final String name;
@@ -217,14 +221,17 @@ public abstract class DataBaseTestCase {
         final String storedProcedureQuery = "{ call concatCharacters(?, ?, ?) }";
 
 
-        final SimpleJdbcTemplate template = new SimpleJdbcTemplate(this.dataSource, SimpleJdbcTemplate.ConnectionInterceptor.EMPTY);
+        final SimpleJdbcTemplate template = new SimpleJdbcTemplate(this.dataSource);
         String result = template.execute(storedProcedureQuery, new CallableStatementCallback<String>() {
             @Override
             public String doInCallableStatement(CallableStatement cs) throws SQLException {
                 cs.setString(1, param1);
                 cs.setString(2, param2);
                 cs.registerOutParameter(3, Types.VARCHAR);
-                cs.execute();
+                final boolean execute = cs.execute();
+                if (!execute) {
+                    throw new SQLException("execute fail");
+                }
                 return cs.getString(3);
             }
         });
@@ -285,7 +292,7 @@ public abstract class DataBaseTestCase {
         final int param2 = 2;
         final String storedProcedureQuery = "{ call swapAndGetSum(?, ?) }";
 
-        final SimpleJdbcTemplate template = new SimpleJdbcTemplate(this.dataSource, SimpleJdbcTemplate.ConnectionInterceptor.EMPTY);
+        final SimpleJdbcTemplate template = new SimpleJdbcTemplate(this.dataSource);
         SwapResult result = template.execute(storedProcedureQuery, new CallableStatementCallback<SwapResult>() {
             @Override
             public SwapResult doInCallableStatement(CallableStatement cs) throws SQLException {

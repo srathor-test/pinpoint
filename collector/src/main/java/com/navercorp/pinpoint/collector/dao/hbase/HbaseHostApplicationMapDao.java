@@ -16,7 +16,6 @@
 
 package com.navercorp.pinpoint.collector.dao.hbase;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.navercorp.pinpoint.collector.dao.HostApplicationMapDao;
 import com.navercorp.pinpoint.collector.util.AtomicLongUpdateMap;
 import com.navercorp.pinpoint.common.buffer.AutomaticBuffer;
@@ -33,12 +32,14 @@ import com.sematext.hbase.wd.AbstractRowKeyDistributor;
 import org.apache.hadoop.hbase.TableName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
 
 /**
+ * 
  * @author netspider
  * @author emeroad
  */
@@ -47,30 +48,24 @@ public class HbaseHostApplicationMapDao implements HostApplicationMapDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.HostStatMap> descriptor;
+    @Autowired
+    private AcceptedTimeService acceptedTimeService;
 
-    private final AcceptedTimeService acceptedTimeService;
+    @Autowired
+    private TimeSlot timeSlot;
 
-    private final TimeSlot timeSlot;
-
-    private final AbstractRowKeyDistributor rowKeyDistributor;
+    @Autowired
+    @Qualifier("acceptApplicationRowKeyDistributor")
+    private AbstractRowKeyDistributor rowKeyDistributor;
 
     // FIXME should modify to save a cachekey at each 30~50 seconds instead of saving at each time
     private final AtomicLongUpdateMap<CacheKey> updater = new AtomicLongUpdateMap<>();
 
-    public HbaseHostApplicationMapDao(HbaseOperations2 hbaseTemplate,
-                                      TableDescriptor<HbaseColumnFamily.HostStatMap> descriptor,
-                                      @Qualifier("acceptApplicationRowKeyDistributor") AbstractRowKeyDistributor rowKeyDistributor,
-                                      AcceptedTimeService acceptedTimeService,
-                                      TimeSlot timeSlot) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-        this.rowKeyDistributor = Objects.requireNonNull(rowKeyDistributor, "rowKeyDistributor");
-        this.acceptedTimeService = Objects.requireNonNull(acceptedTimeService, "acceptedTimeService");
-        this.timeSlot = Objects.requireNonNull(timeSlot, "timeSlot");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.HostStatMap> descriptor;
 
 
     @Override
@@ -99,6 +94,7 @@ public class HbaseHostApplicationMapDao implements HostApplicationMapDao {
         final long acceptedTime = acceptedTimeService.getAcceptedTime();
         return timeSlot.getTimeSlot(acceptedTime);
     }
+
 
 
     private void insertHostVer2(String host, String bindApplicationName, short bindServiceType, long statisticsRowSlot, String parentApplicationName, short parentServiceType) {
@@ -134,12 +130,10 @@ public class HbaseHostApplicationMapDao implements HostApplicationMapDao {
 
     private byte[] createRowKey(String parentApplicationName, short parentServiceType, long statisticsRowSlot, String parentAgentId) {
         final byte[] rowKey = createRowKey0(parentApplicationName, parentServiceType, statisticsRowSlot, parentAgentId);
-        return rowKeyDistributor.getDistributedKey(rowKey);
+        return  rowKeyDistributor.getDistributedKey(rowKey);
     }
 
-
-    @VisibleForTesting
-    static byte[] createRowKey0(String parentApplicationName, short parentServiceType, long statisticsRowSlot, String parentAgentId) {
+    byte[] createRowKey0(String parentApplicationName, short parentServiceType, long statisticsRowSlot, String parentAgentId) {
 
         // even if  a agentId be added for additional specifications, it may be safe to scan rows.
         // But is it needed to add parentAgentServiceType?

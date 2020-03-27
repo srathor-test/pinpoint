@@ -26,7 +26,6 @@ import com.navercorp.pinpoint.bootstrap.config.PropertyLoaderFactory;
 import com.navercorp.pinpoint.common.Version;
 import com.navercorp.pinpoint.common.util.PropertySnapshot;
 import com.navercorp.pinpoint.common.util.SimpleProperty;
-import com.navercorp.pinpoint.common.util.StringUtils;
 import com.navercorp.pinpoint.common.util.SystemProperty;
 
 import java.lang.instrument.Instrumentation;
@@ -57,7 +56,6 @@ class PinpointStarter {
     private SimpleProperty systemProperty = SystemProperty.INSTANCE;
 
     private final Map<String, String> agentArgs;
-    private final AgentType agentType;
     private final AgentDirectory agentDirectory;
     private final Instrumentation instrumentation;
     private final ClassLoader parentClassLoader;
@@ -72,7 +70,6 @@ class PinpointStarter {
 //            throw new NullPointerException("bootstrapClassLoader");
 //        }
         this.agentArgs = Assert.requireNonNull(agentArgs, "agentArgs");
-        this.agentType = getAgentType(agentArgs);
         this.parentClassLoader = parentClassLoader;
         this.agentDirectory = Assert.requireNonNull(agentDirectory, "agentDirectory");
         this.instrumentation = Assert.requireNonNull(instrumentation, "instrumentation");
@@ -80,10 +77,6 @@ class PinpointStarter {
 
     }
 
-    private AgentType getAgentType(Map<String, String> agentArgs) {
-        final String agentTypeParameter = agentArgs.get(AgentParameter.AGENT_TYPE);
-        return AgentType.getAgentType(agentTypeParameter);
-    }
 
     boolean start() {
         final AgentIds agentIds = resolveAgentIds();
@@ -159,12 +152,9 @@ class PinpointStarter {
         final PropertyLoaderFactory factory = new PropertyLoaderFactory(systemProperty, agentDirPath, profilesPath, profileDirs);
         final PropertyLoader loader = factory.newPropertyLoader();
         final Properties properties = loader.load();
-        if (this.agentType == AgentType.PLUGIN_TEST) {
+        if (isTestAgent()) {
             properties.put(DefaultProfilerConfig.PROFILER_INTERCEPTOR_EXCEPTION_PROPAGATE, "true");
         }
-        final String importPluginIds = StringUtils.defaultString(this.agentArgs.get(AgentParameter.IMPORT_PLUGIN), "");
-        properties.put(DefaultProfilerConfig.IMPORT_PLUGIN, importPluginIds);
-
         return properties;
     }
 

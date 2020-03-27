@@ -37,13 +37,7 @@ public class PinpointPluginTestContext {
     private final int jvmVersion;
     private final String javaExecutable;
 
-    private final List<String> importPluginIds;
-
-    public PinpointPluginTestContext(String agentJar, String profile, String configFile,
-                                     List<String> requiredLibraries, List<String> mavenDependencyLibraries,
-                                     Class<?> testClass, String testClassLocation, String[] jvmArguments,
-                                     boolean debug, int jvmVersion,
-                                     String javaExecutable, List<String> importPluginIds) {
+    public PinpointPluginTestContext(String agentJar, String profile, String configFile, List<String> requiredLibraries, List<String> mavenDependencyLibraries, Class<?> testClass, String testClassLocation, String[] jvmArguments, boolean debug, int jvmVersion, String javaExecutable) {
         this.agentJar = agentJar;
         this.profile = profile;
         this.configFile = configFile;
@@ -55,7 +49,6 @@ public class PinpointPluginTestContext {
         this.debug = debug;
         this.jvmVersion = jvmVersion;
         this.javaExecutable = javaExecutable;
-        this.importPluginIds = importPluginIds;
     }
 
     public List<String> getRequiredLibraries() {
@@ -102,10 +95,6 @@ public class PinpointPluginTestContext {
         return javaExecutable;
     }
 
-    public List<String> getImportPluginIds() {
-        return importPluginIds;
-    }
-
     @Override
     public String toString() {
         return "PinpointPluginTestContext{" +
@@ -120,8 +109,6 @@ public class PinpointPluginTestContext {
                 ", debug=" + debug +
                 ", jvmVersion=" + jvmVersion +
                 ", javaExecutable='" + javaExecutable + '\'' +
-                ", importPluginIds=" + importPluginIds +
                 '}';
     }
-
 }

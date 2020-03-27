@@ -9,7 +9,7 @@ import {
     AnalyticsService,
     TRACKED_EVENT_LIST
 } from 'app/shared/services';
-import { UrlQuery, UrlPathId, UrlPath } from 'app/shared/models';
+import { UrlQuery, UrlPathId } from 'app/shared/models';
 
 @Component({
     selector: 'pp-server-map-options-container',
@@ -45,7 +45,7 @@ export class ServerMapOptionsContainerComponent implements OnInit, OnDestroy {
         this.newUrlStateNotificationService.onUrlStateChange$.pipe(
             takeUntil(this.unsubscribe),
             tap((urlService: NewUrlStateNotificationService) => {
-                this.hiddenComponent = !urlService.hasValue(UrlPathId.APPLICATION);
+                this.hiddenComponent = !urlService.hasValue(UrlPathId.APPLICATION, UrlPathId.PERIOD, UrlPathId.END_TIME);
             }),
             map((urlService: NewUrlStateNotificationService) => {
                 return {
@@ -71,22 +71,13 @@ export class ServerMapOptionsContainerComponent implements OnInit, OnDestroy {
 
     onChangeBound(options: {inbound: number, outbound: number, wasOnly: boolean, bidirectional: boolean}): void {
         this.analyticsService.trackEvent(TRACKED_EVENT_LIST.SET_SERVER_MAP_OPTION, `inbound: ${options.inbound}, outbound: ${options.outbound}, wasOnly: ${options.wasOnly}, bidirectional: ${options.bidirectional}`);
-
-        const url = this.newUrlStateNotificationService.isRealTimeMode() ?
-            [
-                this.newUrlStateNotificationService.getStartPath(),
-                UrlPath.REAL_TIME,
-                this.newUrlStateNotificationService.getPathValue(UrlPathId.APPLICATION).getUrlStr(),
-            ] :
-            [
+        this.urlRouteManagerService.moveOnPage({
+            url: [
                 this.newUrlStateNotificationService.getStartPath(),
                 this.newUrlStateNotificationService.getPathValue(UrlPathId.APPLICATION).getUrlStr(),
                 this.newUrlStateNotificationService.getPathValue(UrlPathId.PERIOD).getValueWithTime(),
-                this.newUrlStateNotificationService.getPathValue(UrlPathId.END_TIME).getEndTime(),
-            ];
-
-        this.urlRouteManagerService.moveOnPage({
-            url,
+                this.newUrlStateNotificationService.getPathValue(UrlPathId.END_TIME).getEndTime()
+            ],
             queryParam: {
                 [UrlQuery.INBOUND]: options.inbound,
                 [UrlQuery.OUTBOUND]: options.outbound,

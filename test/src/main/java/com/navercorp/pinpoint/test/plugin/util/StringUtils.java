@@ -1,7 +1,6 @@
 package com.navercorp.pinpoint.test.plugin.util;
 
 import java.util.List;
-import java.util.Map;
 
 public final class StringUtils {
     private StringUtils() {
@@ -29,36 +28,20 @@ public final class StringUtils {
         return false;
     }
 
-    public static String join(List<String> stringList, String separator) {
+    public static String join(List<String> stringList, char separator) {
 
-        final StringBuilder buffer = new StringBuilder();
+        StringBuilder classPath = new StringBuilder();
         boolean first = true;
 
         for (String lib : stringList) {
             if (first) {
                 first = false;
             } else {
-                buffer.append(separator);
+                classPath.append(separator);
             }
 
-            buffer.append(lib);
+            classPath.append(lib);
         }
-        return buffer.toString();
-    }
-
-    public static String join(Map<String, String> map, String kvDelimiter, String separator) {
-        final StringBuilder buffer = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                buffer.append(separator);
-            }
-            buffer.append(entry.getKey());
-            buffer.append(kvDelimiter);
-            buffer.append(entry.getValue());
-        }
-        return buffer.toString();
+        return classPath.toString();
     }
 }

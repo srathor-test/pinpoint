@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import javax.sql.DataSource;
 
 import com.navercorp.pinpoint.pluginit.utils.AgentPath;
-import com.navercorp.pinpoint.test.plugin.ImportPlugin;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +51,6 @@ import com.navercorp.pinpoint.test.plugin.PinpointPluginTestSuite;
  */
 @RunWith(PinpointPluginTestSuite.class)
 @PinpointAgent(AgentPath.PATH)
-@ImportPlugin("com.navercorp.pinpoint:pinpoint-ibatis-plugin")
 @Dependency({ "org.springframework:spring-ibatis:[2.0.7,)", "org.apache.ibatis:ibatis-sqlmap:[2.3.4.726]",
         "org.mockito:mockito-all:1.8.4" })
 public class SqlMapClientTemplateIT {
@@ -76,7 +74,7 @@ public class SqlMapClientTemplateIT {
     private SqlMapClient sqlMapClient;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         when(this.mockSqlMapExecutorDelegate.beginSessionScope()).thenReturn(this.mockSessionScope);
         this.sqlMapClient = new SqlMapClientImpl(this.mockSqlMapExecutorDelegate);

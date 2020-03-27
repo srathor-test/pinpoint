@@ -18,7 +18,6 @@ package com.navercorp.pinpoint.plugin.httpclient3;
 import com.navercorp.pinpoint.pluginit.utils.AgentPath;
 import com.navercorp.pinpoint.pluginit.utils.PluginITConstants;
 import com.navercorp.pinpoint.pluginit.utils.WebServer;
-import com.navercorp.pinpoint.test.plugin.ImportPlugin;
 import com.navercorp.pinpoint.test.plugin.PinpointAgent;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -41,7 +40,6 @@ import com.navercorp.pinpoint.test.plugin.PinpointPluginTestSuite;
  */
 @RunWith(PinpointPluginTestSuite.class)
 @PinpointAgent(AgentPath.PATH)
-@ImportPlugin("com.navercorp.pinpoint:pinpoint-httpclient3-plugin")
 @Dependency({ "commons-httpclient:commons-httpclient:[3.0],[3.0.1],[3.1]", WebServer.VERSION, PluginITConstants.VERSION})
 public class HttpClientIT {
 
@@ -53,7 +51,7 @@ public class HttpClientIT {
     }
 
     @AfterClass
-    public static void AfterClass() {
+    public static void AfterClass() throws Exception {
         webServer = WebServer.cleanup(webServer);
     }
 
@@ -61,7 +59,7 @@ public class HttpClientIT {
     private static final int SO_TIMEOUT = 10000;
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(CONNECTION_TIMEOUT);
         client.getParams().setSoTimeout(SO_TIMEOUT);
@@ -85,7 +83,7 @@ public class HttpClientIT {
     }
 
     @Test
-    public void hostConfig() {
+    public void hostConfig() throws Exception {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(CONNECTION_TIMEOUT);
         client.getParams().setSoTimeout(SO_TIMEOUT);

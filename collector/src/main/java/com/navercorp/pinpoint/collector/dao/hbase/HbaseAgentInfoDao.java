@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
-
 /**
  * @author emeroad
  */
@@ -43,18 +41,17 @@ public class HbaseAgentInfoDao implements AgentInfoDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final HbaseOperations2 hbaseTemplate;
+    @Autowired
+    private HbaseOperations2 hbaseTemplate;
 
-    private final TableDescriptor<HbaseColumnFamily.AgentInfo> descriptor;
-
-    public HbaseAgentInfoDao(HbaseOperations2 hbaseTemplate, TableDescriptor<HbaseColumnFamily.AgentInfo> descriptor) {
-        this.hbaseTemplate = Objects.requireNonNull(hbaseTemplate, "hbaseTemplate");
-        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
-    }
+    @Autowired
+    private TableDescriptor<HbaseColumnFamily.AgentInfo> descriptor;
 
     @Override
     public void insert(AgentInfoBo agentInfo) {
-        Objects.requireNonNull(agentInfo, "agentInfo");
+        if (agentInfo == null) {
+            throw new NullPointerException("agentInfo");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("insert agent info. {}", agentInfo);
