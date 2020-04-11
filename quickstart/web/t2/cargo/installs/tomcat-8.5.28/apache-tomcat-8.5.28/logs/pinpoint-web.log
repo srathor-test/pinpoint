@@ -1,0 +1,13 @@
+2020-03-25 21:30:25 [INFO ](o.a.c.u.Compatibility              ) Running in ZooKeeper 3.4.x compatibility mode
+2020-03-25 21:30:25 [INFO ](o.a.c.u.Compatibility              ) Using emulated InjectSessionExpiration
+2020-03-25 21:30:25 [INFO ](o.a.c.f.i.CuratorFrameworkImpl     ) Starting
+2020-03-25 21:30:29 [INFO ](o.a.c.f.i.CuratorFrameworkImpl     ) Default schema
+2020-03-25 21:30:29 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: CONNECTED
+2020-03-25 23:34:31 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: SUSPENDED
+2020-03-25 23:34:32 [WARN ](o.a.c.ConnectionState              ) Session expired event received
+2020-03-25 23:34:32 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: LOST
+2020-03-25 23:34:34 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: RECONNECTED
+2020-03-25 23:34:36 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: SUSPENDED
+2020-03-25 23:51:46 [WARN ](o.a.c.f.s.ConnectionStateManager   ) Session timeout has elapsed while SUSPENDED. Injecting a session expiration. Elapsed ms: 1030796. Adjusted session timeout ms: 30000
+2020-03-25 23:51:46 [WARN ](o.a.c.ConnectionState              ) Session expired event received
+2020-03-25 23:51:47 [INFO ](o.a.c.f.s.ConnectionStateManager   ) State change: LOST
